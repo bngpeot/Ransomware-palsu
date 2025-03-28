@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIMULASI RANSOMWARE (EDUKASI)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 600px;
+            padding: 20px;
+            border: 2px solid red;
+            border-radius: 10px;
+            background-color: #111;
+        }
+        
+        .warning {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            border: 1px solid #333;
+            background-color: #222;
+            color: white;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: darkred;
+        }
+        
+        .locked {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .countdown {
+            font-size: 24px;
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main">
+        <div class="warning">
+            ⚠ PERINGATAN:⚠
+        </div>
+        <h1>AKSES DIKUNCI</h1>
+        <p>Anda memiliki 3 percobaan untuk memasukkan password yang benar</p>
+        <p id="attempts">Percobaan tersisa: 3</p>
+        <input type="password" id="passwordInput" placeholder="Masukkan password...">
+        <button onclick="checkPassword()">UNLOCK</button>
+        <p><small></small></p>
+    </div>
+
+    <div class="locked" id="lockedScreen" style="display: none;">
+        <h1>TERLALU BANYAK PERCOBAAN SALAH!</h1>
+        <p>Sistem terkunci selama 10 detik</p>
+        <div class="countdown" id="countdown">10</div>
+    </div>
+
+    <script>
+        const correctPassword = "password123";
+        let attempts = 3;
+        let isLocked = false;
+
+        function checkPassword() {
+            if (isLocked) return;
+
+            const input = document.getElementById('passwordInput').value;
+            
+            if (input === correctPassword) {
+                alert("Password benar! Akses diberikan.");
+                document.getElementById('passwordInput').value = '';
+            } else {
+                attempts--;
+                document.getElementById('attempts').textContent = `Percobaan tersisa: ${attempts}`;
+                document.getElementById('passwordInput').value = '';
+                
+                if (attempts <= 0) {
+                    lockScreen();
+                }
+            }
+        }
+
+        function lockScreen() {
+            isLocked = true;
+            document.getElementById('main').style.display = 'none';
+            document.getElementById('lockedScreen').style.display = 'flex';
+            
+            let seconds = 10;
+            const countdown = document.getElementById('countdown');
+            
+            const timer = setInterval(() => {
+                seconds--;
+                countdown.textContent = seconds;
+                
+                if (seconds <= 0) {
+                    clearInterval(timer);
+                    unlockScreen();
+                }
+            }, 1000);
+        }
+
+        function unlockScreen() {
+            isLocked = false;
+            attempts = 3;
+            document.getElementById('attempts').textContent = `Percobaan tersisa: ${attempts}`;
+            document.getElementById('main').style.display = 'block';
+            document.getElementById('lockedScreen').style.display = 'none';
+        }
+
+        // Handle Enter key
+        document.getElementById('passwordInput').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html>
